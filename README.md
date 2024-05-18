@@ -28,3 +28,44 @@
 		- Mediante una conexion SSH se procedio a la instalacion del paquete Postfix con el comando "sudo apt install postfix"
 		- Se establecio como un servidor de correo local, con el dominio "ubuntuserverucsa1er"
 		- Se iniciaron las configuraciones iniciales del servidor de correo.
+
+- InfoLab02
+	- Configuracion de Servicio de Correo
+		- Se instala el paquete de postfix y mailutils con los siguientes comandos
+			- sudo apt install postfix libsasl2-2 libsasl2-modules ca-certificates
+			- sudo apt install mailutils
+		- En la pantalla inicial de configuracion indicamos el tipo de mail como Local Only, el hostname localhost y el SMTP como [smtp.gmail.com]:587
+		- Editamos el fichero de configuracion de postfix main.cf con el editor nativo de linux "nano" con el siguiente comando
+			- sudo nano /etc/postfix/main.cf
+			- editamos los siguientes campos con estos datos, reemplazando lo que ya esta cargado
+				- relayhost = [smtp.gmail.com]:587
+				  smtp_sasl_auth_enable = yes  
+				  smtp_sasl_security_options = noanonymous  
+				  smtp_tls_CApath = /etc/ssl/certs  
+				  smtpd_tls_CApath = /etc/ssl/certs  
+				  smtp_use_tls = yes  
+				  smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt  
+				  smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd  
+				  smtp_tls_security_level = encrypt  
+			- guardamos los cambios con Ctrl + X ---> Y ---> Enter
+		- Luego que de que esten listas las configuraciones iniciales, procedemos a obtener la contraseña de aplicacion de una cuenta de gmail ya creada en el siguiente enlace
+			- https://security.google.com/settings/security/apppasswords
+			- Creamos un ID para generar una clave nueva y copiamos dicha clave para ingresarlo en la configuracion del postfix
+		- Procedemos a configurar el fichero sasl_passwd con el siguiente comando
+			- sudo nano /etc/postfix/sasl/sasl_passwd
+			- Ingresamos las Credenciales con la siguiente sintaxis
+				- [smtp.gmail.com]:587 username@gmail.com:password
+			- Guardamos los cambios con Ctrl + X
+		- Luego procedemos a generar la base de datos con las Credenciales ingresadas y cambiar los permisos de los archivos para ejecutarlos como root
+			- sudo postmap /etc/postfix/sasl/sasl_passwd
+			- sudo chmod 0600 /etc/postfix/sasl/sasl_passwd
+			- sudo chmod 0600 /etc/postfix/sasl/sasl_passwd.db
+			- sudo chown root.root /etc/postfix/sasl/sasl_passwd*
+			  sudo chmod 400 /etc/postfix/sasl/sasl_passwd  
+		- Hasta aqui llega la configuracion del servidor, debemos reiniciar el servicio para aplicar los cambios, lo hacemos con el siguiente comando
+			- sudo /etc/init.d/postfix reload
+			- sudo systemctl restart postfix
+	- Envio de Correo
+		- Los correos se envian con la siguiente Sintaxis
+			- echo "Hola Mundo" | mail -s "Mensaje de prueba" correodestino@example.com
+			
