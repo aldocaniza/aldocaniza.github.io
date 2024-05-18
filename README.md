@@ -54,7 +54,7 @@
 		- Procedemos a configurar el fichero sasl_passwd con el siguiente comando
 			- sudo nano /etc/postfix/sasl/sasl_passwd
 			- Ingresamos las Credenciales con la siguiente sintaxis
-				- [[smtp.gmail.com]]:587 username@gmail.com:password
+				- `[smtp.gmail.com]:587` username@gmail.com:password
 			- Guardamos los cambios con Ctrl + X
 		- Luego procedemos a generar la base de datos con las Credenciales ingresadas y cambiar los permisos de los archivos para ejecutarlos como root
 			- sudo postmap /etc/postfix/sasl/sasl_passwd
