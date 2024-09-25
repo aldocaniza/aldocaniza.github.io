@@ -1,73 +1,173 @@
-- InfoLab01
-	- Se procedio a la instalacion del Sistema Operativo Linux, Distribucion Ubuntu Server 24.04
-	- Pasos
-		- ```Descarga del archivo ISO de la pagina oficial de Ubuntu [Get Ubuntu Server | Download | Ubuntu](https://ubuntu.com/download/server)```
-		- Se utilizo el software Rufus para crear una unidad de instalación en un dispositivo flash USB (Pendrive)
-		- Se inserto el unidad de instalacion en la computadora destinada a Servidor
-		- Se establecio como unidad de booteo a dicha unidad
-		- Se siguieron los pasos indicados en el proceso de instalación, como elección de distribución de teclado, credenciales, paquetes por defecto
-			- Credenciales:
-				- Nombre del equipo: admin0
-				- Nombre del servidor: ubuntuserver
-				- Usuario: admin1
-				- Clave: 12345admin
-				- Usuario: root
-				- Clave: sistema123
-		- En este caso se opto por formatear la unidad HDD para su instalacion en limpio del Sistema Operativo.
-		- Una vez finalizada la instalacion, se reinicio el equipo Servidor.
-		- Al iniciarse el equipo se ingreso con las credenciales "root"
-		- Posterior a eso se instalo el paquete de net-tools con el comando "sudo apt install net-tools"
-		- Luego se ejecuto el comando "ifconfig" para obtener la IP local del servidor
-		- Seguidamente se instalo el paquete SSH para la conexion remota con el servidor con el comando "sudo apt install SSH"
-	- Acceso al servidor por SSH
-	- Pasos
-		- Se descargo el software Putty para conexion remota al servidor
-		- Se ingreso al servidor mediante una conexion SSH, con la IP obtenida en el proceso anterior y las credenciales establecidas en el proceso de instalacion.
-	- Servidor de Correo
-	- Pasos
-		- Mediante una conexion SSH se procedio a la instalacion del paquete Postfix con el comando "sudo apt install postfix"
-		- Se establecio como un servidor de correo local, con el dominio "ubuntuserverucsa1er"
-		- Se iniciaron las configuraciones iniciales del servidor de correo.
-
-- InfoLab02
-	- Configuracion de Servicio de Correo
-		- Se instala el paquete de postfix y mailutils con los siguientes comandos
-			- sudo apt install postfix libsasl2-2 libsasl2-modules ca-certificates
-			- sudo apt install mailutils
-		- En la pantalla inicial de configuracion indicamos el tipo de mail como Local Only, el hostname localhost y el SMTP como `[smtp.gmail.com]:587`
-		- Editamos el fichero de configuracion de postfix main.cf con el editor nativo de linux "nano" con el siguiente comando
-			- sudo nano /etc/postfix/main.cf
-			- editamos los siguientes campos con estos datos, reemplazando lo que ya esta cargado
-				- relayhost = `[smtp.gmail.com]:587`
-				  smtp_sasl_auth_enable = yes  
-				  smtp_sasl_security_options = noanonymous  
-				  smtp_tls_CApath = /etc/ssl/certs  
-				  smtpd_tls_CApath = /etc/ssl/certs  
-				  smtp_use_tls = yes  
-				  smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt  
-				  smtp_sasl_password_maps = hash:/etc/postfix/sasl/sasl_passwd  
-				  smtp_tls_security_level = encrypt  
-			- guardamos los cambios con Ctrl + X ---> Y ---> Enter
-		- Luego que de que esten listas las configuraciones iniciales, procedemos a obtener la contraseña de aplicacion de una cuenta de gmail ya creada en el siguiente enlace
-			- [https://security.google.com/settings/security/apppasswords]
-			- Creamos un ID para generar una clave nueva y copiamos dicha clave para ingresarlo en la configuracion del postfix
-		- Procedemos a configurar el fichero sasl_passwd con el siguiente comando
-			- sudo nano /etc/postfix/sasl/sasl_passwd
-			- Ingresamos las Credenciales con la siguiente sintaxis
-				- `[smtp.gmail.com]:587` username@gmail.com:password
-			- Guardamos los cambios con Ctrl + X
-		- Luego procedemos a generar la base de datos con las Credenciales ingresadas y cambiar los permisos de los archivos para ejecutarlos como root
-			- sudo postmap /etc/postfix/sasl/sasl_passwd
-			- sudo chmod 0600 /etc/postfix/sasl/sasl_passwd
-			- sudo chmod 0600 /etc/postfix/sasl/sasl_passwd.db
-			- sudo chown root.root /etc/postfix/sasl/sasl_passwd*
-			  sudo chmod 400 /etc/postfix/sasl/sasl_passwd  
-		- Hasta aqui llega la configuracion del servidor, debemos reiniciar el servicio para aplicar los cambios, lo hacemos con el siguiente comando
-			- sudo /etc/init.d/postfix reload
-			- sudo systemctl restart postfix
-	- Envio de Correo
-		- Los correos se envian con la siguiente Sintaxis
-			- ```echo "Hola Mundo" | mail -s "Mensaje de prueba" correodestino@example.com```
-
-			
-			
+- # [[Metodologia de la programacion]]
+	- ## Ordenamiento Metodo Burbuja
+		- ### Sintaxis
+			-
+			  ```c++
+			  intercambio (&valor1, &valor2){
+			    int temporal;
+			      temporal = valor1;
+			    	valor1 = valor2;
+			    	valor2 = temporal;
+			  }
+			  
+			  a = 10; b = 20;
+			  intercambio (a,b);
+			  
+			  //resultado a=20 b=10;
+			  ```
+			-
+			  ```c++
+			  // 4,3,2,1,0
+			  
+			  for (i=0;i<5;i++){
+			    for(j=i+1;j<5;j++){
+			      if (vector[i] > vector[j]){
+			       	intercambiar(vector[i],vector[j]); 
+			      }
+			    }
+			  }
+			  ```
+		- & : Operador de Desreferencia
+			- cuando en una funcion pasan parametros estos crean una copia de la variable se le conoce **"por valor"** si quieren pasar el valor original usar &, es por **"por referencia"**
+		- Desbordamiento de pila #card
+			- se le conoce como StackOverFlow
+		- Se llama burbuja porque sube de abajo para arriba
+	- ## Ejercicios
+		- [corregir y otros esta bien.docx](../assets/corregir_y_otros_esta_bien_1727221057513_0.docx)
+		- #### Ejercicio 1
+			-
+			  ```c++
+			  //1.	Ordenar Vectores. (corrige los errores)
+			  #include <iostream>
+			  using namespace std;
+			  int main(){
+			  	int i,j,auxiliar;
+			  	int n = 10;  
+			  	int vector[10] ={1,2,3,4,5,6,7,8,9,10} ;
+			  	
+			  	//primero se ejecuta el segundo for, 
+			  	//luego el de arriba, similar al parentesis 
+			  	//dentro de un parentesis en matematicas
+			  	for(i = 0;i < n;i++){
+			  		for(j = 0;j <(n-1);j++){ 
+			  		    if (vector[i] > vector[j]){ //este bloque hace el intercambio, dependiendo de la condicion ordena ASC (>) o DESC (<) 
+			  				auxiliar     =  vector[i];
+			  		      	vector[i]    =  vector[j];
+			  		      	vector[j]    =  auxiliar;
+			  	        }
+			  	    }
+			  	}
+			  
+			  	for(i = 0;i < n ;i++){
+			  		cout  <<  vector[i]  << "\t"; // \t para dejar como tabulador
+			  	}
+			  	return 0;
+			  }//version 1
+			  ```
+			-
+			  ```c++
+			  //1.	Ordenar Vectores. (corrige los errores)
+			  #include <iostream>
+			  using namespace std;
+			  int main(){
+			  	int i,j,auxiliar;
+			  	int n = 10;  
+			  	int vector[10] ={10,9,8,7,6,5,4,3,2,1} ;
+			  	
+			  	//primero se ejecuta el segundo for, 
+			  	//luego el de arriba, similar al parentesis 
+			  	//dentro de un parentesis en matematicas
+			  	for(i = 0;i < n;i++){
+			  		for(j = 0;j <(n-1);j++){ 
+			  		    if (vector[i] < vector[j]){ //este bloque hace el intercambio, dependiendo de la condicion ordena ASC (>) o DESC (<) 
+			  				auxiliar     =  vector[i];
+			  		      	vector[i]    =  vector[j];
+			  		      	vector[j]    =  auxiliar;
+			  	        }
+			  	    }
+			  	}
+			  
+			  	for(i = 0;i < n ;i++){
+			  		cout  <<  vector[i]  << "\t"; // \t para dejar como tabulador
+			  	}
+			  	return 0;
+			  }//version 2 Ascendente
+			  ```
+			-
+			  ```c++
+			  //1.	Ordenar Vectores. (corrige los errores)
+			  #include <iostream>
+			  using namespace std;
+			  int main(){
+			  	int i,j,auxiliar;
+			  	int n = 10;  
+			  	int vector[10] ={10,9,8,7,6,5,4,3,2,1} ;
+			  	
+			  	//primero se ejecuta el segundo for, 
+			  	//luego el de arriba, similar al parentesis 
+			  	//dentro de un parentesis en matematicas
+			  	for(i = 0;i < n;i++){
+			  		for(j = i+1;j <(n);j++){ //i+1 empieza comparando el primer componente con el segundo
+			  		    if (vector[i] > vector[j]){ //este bloque hace el intercambio, dependiendo de la condicion ordena ASC (>) o DESC (<) 
+			  				auxiliar     =  vector[i];
+			  		      	vector[i]    =  vector[j];
+			  		      	vector[j]    =  auxiliar;
+			  	        }
+			  	    }
+			  	}
+			  
+			  	for(i = 0;i < n ;i++){
+			  		cout  <<  vector[i]  << "\t"; // \t para dejar como tabulador
+			  	}
+			  	return 0;
+			  }//version 3 Ascendente con i+1
+			  ```
+			-
+			  ```c++
+			  #include<iostream>
+			  using namespace std;
+			  void Imprimir_vector(int *vector, int n){
+			    for(int i=0;i<n;i++){
+			      cout<< vector[i]<<"\t";
+			    }
+			    cout<<endl;
+			  }
+			  void Intercambiar(int &valor1, int &valor2){
+			    int auxiliar = valor1;
+			    valor1       = valor2;
+			    valor2       = auxiliar;
+			  }
+			  void Ordenar_vector(int *vector, int n){
+			    for(int i = 0;i < n;i++)
+			      for(int j = 0;j <(n-1);j++) 
+			        if (vector[i] > vector[j])
+			          Intercambiar(vector[i],vector[j]);
+			  }
+			  int main(){
+			    int n = 10;  
+			    int vector[10] ={1,2,3,4,5,6,7,8,9,10} ;
+			    Imprimir_vector(vector,n); //se imprime antes de ordenar    
+			    Ordenar_vector(vector,n); //Se llama a la funcion de ordenar
+			    Imprimir_vector(vector,n); //Se imprime despues de ordenar
+			    
+			    return 0;
+			  }//Version 4 con funciones
+			  ```
+			-
+				-
+		-
+		-
+	- ## Consideraciones
+		- \t para dejar como tabulador
+		- \n para salto de linea
+		- primero se ejecuta el segundo for, luego el de arriba, similar al parentesis dentro de un parentesis en matematicas
+		- if(vector[i] > vector[j]) //dependiendo de la condicion ordena ASC (<) o DESC (>)
+		- el *(Asterisco) es para pasar por referencia el vector (se usa cuando es un vector)
+		  ```c++
+		  int *vector	
+		  ```
+		- el &(Amspersan) es para pasar por referencia variables (se usa con las variables) 
+		  ```c++
+		  intercambio(&valor1,&valor2){}
+		  ```
+		- Si hay un for dentro de otro for se pueden quitar los corchetes {} y el codigo funcionaria igual
